@@ -56,10 +56,10 @@ if "health_metrics" in st.session_state:
             col1,col2, col3 = st.columns(3)
             with col1:
                 if st.button("What's a health meal for me to eat tonight?"):
-                    user_input = "What's a health meal for me to eat tonight?"
+                    user_input = "What's a health meal for me to eat tonight? Ask at least 3-5 questions to give a personalized recommendation."
             with col2:
                 if st.button("What foods should I avoid based on my conditions?"):
-                    user_input = "What foods should I avoid based on my conditions?"
+                    user_input = "What foods should I avoid based on my conditions?  Ask at least 3-5 questions to give a personalized recommendation."
             with col3: 
                 if st.button("What foods can help me recover from a long workout?"):
                     user_input = "What foods can help me recover from a long workout?"

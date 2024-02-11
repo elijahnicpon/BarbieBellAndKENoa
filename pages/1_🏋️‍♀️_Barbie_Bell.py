@@ -58,10 +58,10 @@ if "health_metrics" in st.session_state:
             col1,col2, col3 = st.columns(3)
             with col1:
                 if st.button("Create a workout plan for me to do today!"):
-                    user_input = "Create a workout plan for me to do today!"
+                    user_input = "Create a workout plan for me to do today! Feel free to ask 5-10 additional questinos to give a good recommendation."
             with col2:
                 if st.button("Create a weeks worth of workout plans please!"):
-                    user_input = "Create a weeks worth of workout plans please!"
+                    user_input = "Create a weeks worth of workout plans please! Feel free to ask 5-10 additional questinos to give a good recommendation."
             with col3: 
                 if st.button("How Can Athletes Improve Force Production?"):
                     user_input = "How Can Athletes Improve Force Production?"
