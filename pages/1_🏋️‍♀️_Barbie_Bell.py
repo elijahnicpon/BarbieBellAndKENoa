@@ -33,7 +33,7 @@ if "health_metrics" in st.session_state:
 
     llm = ChatOpenAI(temperature=0.1)
     qa = ConversationalRetrievalChain.from_llm(llm, vector_search.as_retriever())
-    st.chat_message("assistant", avatar="🏋️‍♀️").write("Hello")
+    # st.chat_message("assistant", avatar="🏋️‍♀️").write("Hello")
 
 
     # Initialize chat history
@@ -49,8 +49,13 @@ if "health_metrics" in st.session_state:
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        if message["role"] == "assistant":
+
+            with st.chat_message(message["role"], avatar="🏋️‍♀️"):
+                st.markdown(message["content"])
+        else:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
 
     if len(st.session_state.messages) == 1:
         with st.container():
@@ -85,6 +90,6 @@ if "health_metrics" in st.session_state:
         message_placeholder.markdown(full_response)    
         print(full_response)
         st.session_state.messages.append({"role": "assistant", "content": full_response})
-        st.write(st.session_state.health_metrics)
+        # st.write(st.session_state.health_metrics)
 else:
     st.subheader("Please submit your personal information in Home to chat with Barbie Bell!")

@@ -17,10 +17,10 @@ with st.expander("Your Information", expanded=True):
         with col4:
             height = st.text_input("Height")
 
-        fitness_goals = st.text_area("What are your fitness goals TODO: examples!")
-        exercise_experience = st.text_area("What exercise experience do you have? TODO: examples!")
-        access_to_equipment = st.text_area("What sorts of exercise equipment do you have access to? TODO: examples!")
-        time_commitment = st.text_area("How often are you available to exercise?")
+        # fitness_goals = st.text_area("What are your fitness goals TODO: examples!")
+        # exercise_experience = st.text_area("What exercise experience do you have? TODO: examples!")
+        # access_to_equipment = st.text_area("What sorts of exercise equipment do you have access to? TODO: examples!")
+        # time_commitment = st.text_area("How often are you available to exercise?")
         preexisting_conditions = st.text_area("Do you have any preexisting medical conditions? TODO: examples!")
         additional_information = st.text_area("Any additonal information you would like to have considered?")
 
@@ -31,10 +31,10 @@ with st.expander("Your Information", expanded=True):
                 "age": age,
                 "weight": weight,
                 "height": height,
-                "fitness_goals": fitness_goals,
-                "exercise_experience": exercise_experience,
-                "access_to_equipment": access_to_equipment,
-                "time_commitment": time_commitment,
+                # "fitness_goals": fitness_goals,
+                # "exercise_experience": exercise_experience,
+                # "access_to_equipment": access_to_equipment,
+                # "time_commitment": time_commitment,
                 "preexisting_conditions": preexisting_conditions,    
                 "additional_info": additional_information
             }
