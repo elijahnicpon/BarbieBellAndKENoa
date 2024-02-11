@@ -34,8 +34,8 @@ if "health_metrics" in st.session_state:
     qa = ConversationalRetrievalChain.from_llm(llm, vector_search.as_retriever())
 
     # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
+    if "ken_messages" not in st.session_state:
+        st.session_state.ken_messages = [
             # {"role": "system", "content": "you are Barbie Bell, an eccentric olympic trainer, and you’re about to meet your next client. your goal is to collect all relevant information to give them a custom workout plan based on your client's specifications. start by introducing yourself, ask if they're ready to answer questions to generate a workout, then interview your client question by question and ask about them 10-20 questions about their fitness goals, gender, height, weight, health, access to equipment, time availability, whether they want a weekly plan or single day, and anything else to give them a good workout. when you're finished with the interview, neatly summarize the metrics you collected during the interview and call it 'SUMMARY'"},
             {"role": "assistant", "content": "Hi! I'm KENoa, your personal nutritionist! How can I help you today?"}
         ]
@@ -45,7 +45,7 @@ if "health_metrics" in st.session_state:
     
 
     # Display chat messages from history on app rerun
-    for message in st.session_state.messages:
+    for message in st.session_state.ken_messages:
         if message["role"] == "assistant":
 
             with st.chat_message(message["role"], avatar="🧑‍🍳"):
@@ -54,7 +54,7 @@ if "health_metrics" in st.session_state:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
-    if len(st.session_state.messages) == 1:
+    if len(st.session_state.ken_messages) == 1:
         with st.container():
             st.markdown("#### Sample Prompts :)")
             col1,col2, col3 = st.columns(3)
@@ -71,12 +71,12 @@ if "health_metrics" in st.session_state:
     # Accept user input
     # if prompt := st.chat_input("Ask Barbie Bell, your personal trainer, any fitness related question!"):
     if user_input:
-        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.session_state.ken_messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
 
         # Query the assistant using the latest chat history
-        result = qa({"prompt":"you are a helpful elite nutritionalist. please help your client create nutrition plans and answer nutrition questions.", "question": user_input, "health_info": st.session_state.health_metrics, "chat_history": [(message["role"], message["content"]) for message in st.session_state.messages]})
+        result = qa({"prompt":"you are a helpful elite nutritionalist. please help your client create nutrition plans and answer nutrition questions.", "question": user_input, "health_info": st.session_state.health_metrics, "chat_history": [(message["role"], message["content"]) for message in st.session_state.ken_messages]})
 
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
@@ -85,8 +85,9 @@ if "health_metrics" in st.session_state:
             full_response = result["answer"]
             message_placeholder.markdown(full_response + "|")
         message_placeholder.markdown(full_response)    
-        print(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
+        # print(full_response)
+        st.session_state.ken_messages.append({"role": "assistant", "content": full_response})
         # st.write(st.session_state.health_metrics)
+        print(f"{[(message['role'], message['content']) for message in st.session_state.ken_messages]}")
 else:
     st.subheader("Please submit your personal information in Home to chat with KENoa!")
