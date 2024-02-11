@@ -21,7 +21,7 @@ with st.expander("Your Information", expanded=True):
         # exercise_experience = st.text_area("What exercise experience do you have? TODO: examples!")
         # access_to_equipment = st.text_area("What sorts of exercise equipment do you have access to? TODO: examples!")
         # time_commitment = st.text_area("How often are you available to exercise?")
-        preexisting_conditions = st.text_area("Do you have any preexisting medical conditions? TODO: examples!")
+        preexisting_conditions = st.text_area("Do you have any preexisting medical conditions?")
         additional_information = st.text_area("Any additonal information you would like to have considered?")
 
         submitted = st.form_submit_button("Submit")

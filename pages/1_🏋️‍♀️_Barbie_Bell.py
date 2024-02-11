@@ -1,10 +1,11 @@
 import os
 from pymongo import MongoClient
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import ConversationalRetrievalChain, LLMChain
 from langchain_community.llms import OpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain.memory import ConversationBufferWindowMemory
 import streamlit as st
 from langchain_community.vectorstores import MongoDBAtlasVectorSearch
 
@@ -63,10 +64,10 @@ if "health_metrics" in st.session_state:
             col1,col2, col3 = st.columns(3)
             with col1:
                 if st.button("Create a workout plan for me to do today!"):
-                    user_input = "Create a workout plan for me to do today! Feel free to ask 5-10 additional questinos to give a good recommendation."
+                    user_input = "Create a workout plan for me to do today! Ask 5-10 questions to give a good recommendation."
             with col2:
                 if st.button("Create a weeks worth of workout plans please!"):
-                    user_input = "Create a weeks worth of workout plans please! Feel free to ask 5-10 additional questinos to give a good recommendation."
+                    user_input = "Create a weeks worth of workout plans please! Ask 5-10 questions to give a good recommendation."
             with col3: 
                 if st.button("How Can Athletes Improve Force Production?"):
                     user_input = "How Can Athletes Improve Force Production?"
@@ -79,17 +80,62 @@ if "health_metrics" in st.session_state:
             st.markdown(user_input)
 
         # Query the assistant using the latest chat history
-        result = qa({"prompt":"you are a helpful elite personal trainer. please help your client create workout plans and answer fitness questions.", "question": user_input, "health_info": st.session_state.health_metrics, "chat_history": [(message["role"], message["content"]) for message in st.session_state.messages]})
+        # result = qa({"prompt":"you are a helpful elite personal trainer. please help your client create workout plans and answer fitness questions.", "question": user_input, "health_info": st.session_state.health_metrics, "chat_history": [(message["role"], message["content"]) for message in st.session_state.messages]})
+        if st.session_state.messages[-1]["role"] != "assistant":
+
+            DB_NAME = "langchain"       
+            COLLECTION_NAME = "pt"
+
+            vector_search = MongoDBAtlasVectorSearch.from_connection_string(
+                ATLAS_CONNECTION_STRING,
+                f"{DB_NAME}.{COLLECTION_NAME}",
+                OpenAIEmbeddings(),
+                index_name="vector_index"
+            )
+
+            context = vector_search.similarity_search_with_score(query=user_input, k=1)
+            print(context)
+            prompt = PromptTemplate(
+                input_variables=["chat_history", "question", "context" "bio_info"],
+                template="""You are a very kind and friendly AI personal trainer, named Barbie Bell. You are
+                currently having a conversation with a human. Answer the questions
+                in a kind and friendly tone with some sense of humor.
+                
+                chat_history: {chat_history},
+                Human: {question},
+                human's info: {bio_info},
+                context: {context}
+                AI:"""
+            )
+
+
+            llm = ChatOpenAI()
+            memory = ConversationBufferWindowMemory(memory_key="chat_history", input_key="question", k=4)
+            llm_chain = LLMChain(
+                llm=llm,
+                memory=memory,
+                prompt=prompt
+            )
+            with st.chat_message("assistant", avatar="🏋️‍♀️"):
+                with st.spinner("Loading..."):
+                    ai_response = llm_chain.predict(question=user_input, bio_info=st.session_state.health_metrics, context=context)
+                    st.write(ai_response)
+            new_ai_message = {"role": "assistant", "content": ai_response}
+            st.session_state.messages.append(new_ai_message)
+        
+
+        # result = llm_chain.predict(question=user_input)
 
         # Display assistant response in chat message container
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            full_response = ""
-            full_response = result["answer"]
-            message_placeholder.markdown(full_response + "|")
-        message_placeholder.markdown(full_response)    
-        print(full_response)
-        st.session_state.messages.append({"role": "assistant", "content": full_response})
+        # with st.chat_message("assistant"):
+        #     message_placeholder = st.empty()
+        #     full_response = ""
+        #     full_response = result
+        #     # full_response = result["answer"] for old
+        #     message_placeholder.markdown(full_response + "|")
+        # message_placeholder.markdown(full_response)    
+        # print(full_response)
+        # st.session_state.messages.append({"role": "assistant", "content": full_response})
         # st.write(st.session_state.health_metrics)
 else:
     st.subheader("Please submit your personal information in Home to chat with Barbie Bell!")
